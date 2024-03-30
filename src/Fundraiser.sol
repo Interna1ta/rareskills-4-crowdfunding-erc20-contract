@@ -76,7 +76,11 @@ contract Fundraiser {
         uint8 decimals = MyERC20(_token).decimals();
         s_campaignCount++;
         s_campaigns[s_campaignCount].creator = msg.sender;
-        s_campaigns[s_campaignCount].goal = multiplyByDecimals(decimals, _goal);
+        s_campaigns[s_campaignCount].goal = _multiplyByDecimals(
+            decimals,
+            _goal
+        );
+        s_campaigns[s_campaignCount].token = _token;
         s_campaigns[s_campaignCount].deadline = _deadline;
         emit CampaignCreated(
             s_campaignCount,
@@ -114,11 +118,11 @@ contract Fundraiser {
             revert Fundraiser__DonationFailed("Donation failed");
         }
         uint8 decimals = MyERC20(_token).decimals();
-        s_campaigns[_campaignId].totalDonated += multiplyByDecimals(
+        s_campaigns[_campaignId].totalDonated += _multiplyByDecimals(
             decimals,
             _amount
         );
-        s_campaigns[_campaignId].donations[msg.sender] += multiplyByDecimals(
+        s_campaigns[_campaignId].donations[msg.sender] += _multiplyByDecimals(
             decimals,
             _amount
         );
@@ -147,7 +151,7 @@ contract Fundraiser {
             bool ok = transferMoney(
                 address(this),
                 msg.sender,
-                divideByDecimals(decimals, campaign.totalDonated),
+                _divideByDecimals(decimals, campaign.totalDonated),
                 campaign.token
             );
 
@@ -159,7 +163,7 @@ contract Fundraiser {
             emit Withdrawal(
                 msg.sender,
                 _campaignId,
-                divideByDecimals(decimals, campaign.totalDonated),
+                _divideByDecimals(decimals, campaign.totalDonated),
                 campaign.token
             );
         }
@@ -186,7 +190,7 @@ contract Fundraiser {
             bool ok = transferMoney(
                 address(this),
                 msg.sender,
-                divideByDecimals(decimals, excessAmount),
+                _divideByDecimals(decimals, excessAmount),
                 campaign.token
             );
 
@@ -198,7 +202,7 @@ contract Fundraiser {
             emit Withdrawal(
                 msg.sender,
                 _campaignId,
-                divideByDecimals(decimals, excessAmount),
+                _divideByDecimals(decimals, excessAmount),
                 campaign.token
             );
         }
@@ -219,14 +223,14 @@ contract Fundraiser {
         }
     }
 
-    function multiplyByDecimals(
+    function _multiplyByDecimals(
         uint8 _decimals,
         uint256 _amount
     ) internal pure returns (uint256) {
         return _amount * (10 ** _decimals);
     }
 
-    function divideByDecimals(
+    function _divideByDecimals(
         uint8 _decimals,
         uint256 _amount
     ) internal pure returns (uint256) {
