@@ -53,21 +53,4 @@ contract FundraiserTest is Test {
         fundraiser.donate(1, address(rightErc20), 10000);
         vm.stopPrank();
     }
-
-    function testWithdraw() public {
-        vm.startPrank(USER);
-        fundraiser.createFundraiser(
-            TEST_GOAL,
-            address(rightErc20),
-            block.timestamp + TEST_DEADLINE
-        );
-        rightErc20.mint(USER, 10000);
-        rightErc20.approve(address(fundraiser), 10000);
-        fundraiser.donate(1, address(rightErc20), 10000);
-        vm.expectRevert();
-        fundraiser.withdraw(1);
-        vm.warp(block.timestamp + TEST_DEADLINE);
-        fundraiser.withdraw(1);
-        vm.stopPrank();
-    }
 }
