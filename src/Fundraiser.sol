@@ -148,6 +148,10 @@ contract Fundraiser {
 
         if (campaign.totalDonated >= campaign.goal) {
             uint8 decimals = MyERC20(campaign.token).decimals();
+            MyERC20(campaign.token).approve(
+                address(this),
+                campaign.totalDonated
+            );
             bool ok = transferMoney(
                 address(this),
                 msg.sender,

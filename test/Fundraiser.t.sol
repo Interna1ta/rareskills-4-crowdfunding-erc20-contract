@@ -10,7 +10,7 @@ contract FundraiserTest is Test {
     MyERC20 public rightErc20;
     MyERC20 public wrongErc20;
     address public OWNER = makeAddr("OWNER");
-    address public USER = makeAddr("user");
+    address public USER = makeAddr("USER");
     uint256 public constant TEST_GOAL = 10000;
     uint256 public constant TEST_DEADLINE = 10000;
 
@@ -51,6 +51,21 @@ contract FundraiserTest is Test {
         rightErc20.mint(USER, 10000);
         rightErc20.approve(address(fundraiser), 10000);
         fundraiser.donate(1, address(rightErc20), 10000);
+        vm.stopPrank();
+    }
+
+    function testWithdraw() public {
+        vm.startPrank(OWNER);
+        fundraiser.createFundraiser(
+            TEST_GOAL,
+            address(rightErc20),
+            block.timestamp + TEST_DEADLINE
+        );
+        rightErc20.mint(OWNER, 10000);
+        rightErc20.approve(address(fundraiser), 10000);
+        fundraiser.donate(1, address(rightErc20), 10000);
+        vm.warp(12000);
+        fundraiser.withdraw(1);
         vm.stopPrank();
     }
 }
